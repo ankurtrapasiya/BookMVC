@@ -111,21 +111,26 @@ public class Book {
         String query;
 
         DBConnection db = new DBConnection();
-        query = "select stock from book_stock where bookId=" + this.id;
+        query = "select quantity from book_stock where book_id=" + this.id;
 
         try {
+            
+            db.connect();
+            
             ResultSet rs = db.customQuery(query);
 
-            int stk = rs.getInt("stock");
+            rs.next();
+            
+            int stk = rs.getInt("quantity");
 
             if (stock == Stock.DECR) {
                 if (stk > 0 && (stk - qty) > 0) {
-                    query = "update book_stock set stock=" + (stk - qty);
+                    query = "update book_stock set quantity=" + (stk - qty);
                     db.executeQuery(query);
                 }
             } else if (stock == Stock.INCR) {
                 if (stk > 0) {
-                    query = "update book_stock set stock=" + (stk + qty);
+                    query = "update book_stock set quantity=" + (stk + qty);
                     db.executeQuery(query);
                 }
             }
@@ -207,6 +212,10 @@ public class Book {
                     db.executeQuery(query);
 
                 }
+
+                query = "insert into book_stock values(" + bookId + "," + this.stock + ")";
+                db.executeQuery(query);
+
                 retval = true;
             }
         } catch (Exception e) {
@@ -246,6 +255,12 @@ public class Book {
                     b.setTitle(rs.getString("title"));
                     b.setPublisher(rs.getString("publisher"));
                     b.setPrice(String.valueOf(rs.getDouble("price")));
+
+                    ResultSet r1 = db.customQuery("select quantity from book_stock where book_id=" + bookId);
+
+                    while (r1.next()) {
+                        b.setStock(r1.getInt(1));
+                    }
 
                     ResultSet rs2 = db
                             .customQuery("select * from book_author where book_id ="
@@ -311,6 +326,14 @@ public class Book {
                 b.setTitle(rs.getString("title"));
                 b.setPublisher(rs.getString("publisher"));
                 b.setPrice(String.valueOf(rs.getDouble("price")));
+
+                ResultSet r1 = db.customQuery("select quantity from book_stock where book_id=" + id);
+
+                while (r1.next()) {
+                    b.setStock(r1.getInt(1));
+                }
+
+
 
                 ResultSet rs2 = db
                         .customQuery("select * from book_author where book_id ="

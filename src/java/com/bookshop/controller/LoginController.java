@@ -74,6 +74,8 @@ public class LoginController extends HttpServlet {
             }
             session.setAttribute("user", u);
             session.setAttribute("customer", c);
+            
+            System.out.println("customer" + c);
 
             String previousURL = (String) session.getAttribute("previousURL");
 

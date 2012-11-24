@@ -66,12 +66,15 @@ public class BookController extends HttpServlet {
             int qty = 1;
             books = (HashMap<Integer, Integer>) session.getAttribute("books");
 
-            if(books==null)
-            {
-                books=new HashMap<>();                
-            }                        
-            else if (books.containsKey(b.getId())) {
+            if (books == null) {
+                books = new HashMap<>();
+            } else if (books.containsKey(b.getId())) {
+
                 qty = books.get(b.getId()) + 1;
+                if (qty > b.getStock()) {
+                    qty = b.getStock();
+                }
+
             }
 
             books.put(b.getId(), qty);

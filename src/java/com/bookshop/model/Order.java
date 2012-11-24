@@ -6,110 +6,130 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import com.bookshop.db.DBConnection;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Order {
 
-	@Override
-	public String toString() {
-		return "Order [order_id=" + order_id + ", order_date=" + order_date
-				+ ", amount=" + amount + ", status=" + status + ", customer="
-				+ customer + ", orderDetails=" + orderDetails + "]";
-	}
+    @Override
+    public String toString() {
+        return "Order [order_id=" + order_id + ", order_date=" + order_date
+                + ", amount=" + amount + ", status=" + status + ", customer="
+                + customer + ", orderDetails=" + orderDetails + "]";
+    }
+    private int order_id;
 
-	private int order_id;
+    public int getOrder_id() {
+        return order_id;
+    }
 
-	public int getOrder_id() {
-		return order_id;
-	}
+    public void setOrder_id(int order_id) {
+        this.order_id = order_id;
+    }
+    private Date order_date;
+    private float amount;
+    private String status;
+    private Customer customer;
+    private List<OrderDetail> orderDetails;
 
-	public void setOrder_id(int order_id) {
-		this.order_id = order_id;
-	}
+    public List<OrderDetail> getOrderDetails() {
+        return orderDetails;
+    }
 
-	private Date order_date;
-	private float amount;
-	private String status;
-	private Customer customer;
-	private OrderDetail orderDetails;
+    public void setOrderDetails(List<OrderDetail> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
 
-	public OrderDetail getOrderDetails() {
-		return orderDetails;
-	}
+    public Date getOrder_date() {
+        return order_date;
+    }
 
-	public void setOrderDetails(OrderDetail orderDetails) {
-		this.orderDetails = orderDetails;
-	}
+    public void setOrder_date(Date order_date) {
+        this.order_date = order_date;
+    }
 
-	public Date getOrder_date() {
-		return order_date;
-	}
+    public float getAmount() {
+        return amount;
+    }
 
-	public void setOrder_date(Date order_date) {
-		this.order_date = order_date;
-	}
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
 
-	public float getAmount() {
-		return amount;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setAmount(float amount) {
-		this.amount = amount;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public Customer getCustomer() {
+        return customer;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-	public Customer getCustomer() {
-		return customer;
-	}
+    public boolean addOrder(Order o) {
+        boolean retval = false;
+        DBConnection db = new DBConnection();
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
+        String query = "insert into `order`(order_date,amount,status,customer_id) values";
+        query += "('" + this.order_date;
+        query += "'," + this.amount;
+        query += ",'" + this.status;
+        query += "'," + this.customer.getCustomer_id();
+        query += ")";
 
-	public boolean addOrder(Map<Integer, Book> map) {
-		boolean retval = false;
-		DBConnection db = new DBConnection();
+        System.out.println("query " + query);
+        
+        int order_id = 0;
+        ResultSet rs = null;
 
-		String query = "insert into order(order_date,amount,status,customer_id) values";
-		query += "(" + this.order_date;
-		query += "," + this.amount;
-		query += "," + this.status;
-		query += "," + this.customer.getCustomer_id();
-		query += ")";
+        try {
+            
+            db.connect();
+            
+            db.executeQuery(query);
 
-		int order_id = 0;
-		ResultSet rs = null;
+            rs = db.customQuery("select last_insert_id() as order_id;");
 
-		try {
-			db.executeQuery(query);
+            rs.next();
+            order_id = rs.getInt("order_id");
+            
+            OrderDetail od;
 
-			rs = db.customQuery("select last_insert_rowid();");
+            for (int i = 0; i < orderDetails.size(); i++) {
+                od = orderDetails.get(i);
+                od.setOrder_id(order_id);
 
-			order_id = rs.getInt("order_id");
-			OrderDetail od;
+                query = "insert into order_detail(order_id,book_id,qty) values";
+                query += "(" + od.getOrder_id();
+                query += "," + od.getBook_id();
+                query += "," + od.getQuantity();
+                query += ")";
+                
+                db.executeQuery(query);
+                
+                
+                Book b=new Book();
+                b=b.getBookFromId(od.getBook_id());
+                b.updateStock(Stock.DECR, od.getQuantity());
 
-			for (Map.Entry<Integer, Book> val : map.entrySet()) {
-				od = new OrderDetail();
-				od.addOrderDetail(order_id, val.getKey(), val.getValue()
-						.getQuantity());
-				val.getValue().updateStock(Stock.DECR,
-						val.getValue().getQuantity());
-			}
+            }
 
-			retval = true;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            retval = true;
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Order.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		return retval;
+        return retval;
 
-	}
-
+    }
 }
