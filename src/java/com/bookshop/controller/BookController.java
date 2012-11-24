@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.bookshop.model.Book;
-import java.util.Enumeration;
 
 /**
  * Servlet implementation class BookController
@@ -39,8 +38,10 @@ public class BookController extends HttpServlet {
 
         Book b = new Book();
         List<Book> list = b.getBookList();
+
+        System.out.println("list" + list);
+
         request.setAttribute("bookList", list);
-        request.setAttribute("message", "hi");
         RequestDispatcher rd = request.getRequestDispatcher("home.jsp");
         rd.forward(request, response);
 
@@ -54,17 +55,27 @@ public class BookController extends HttpServlet {
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
-               
+
         String hiddenId = request.getParameter("hdnBookId");
         System.out.println("hiddenId" + hiddenId);
         HttpSession session = request.getSession(false);
-        HashMap<Integer, Book> books = null;
+        HashMap<Integer, Integer> books = null;
         if (hiddenId != null) {
             Book b = new Book();
             b = b.getBookFromId(Integer.parseInt(hiddenId));
-            books = (HashMap<Integer, Book>) session.getAttribute("books");
-            System.out.println(books);
-            books.put(b.getId(), b);
+            int qty = 1;
+            books = (HashMap<Integer, Integer>) session.getAttribute("books");
+
+            if(books==null)
+            {
+                books=new HashMap<>();                
+            }                        
+            else if (books.containsKey(b.getId())) {
+                qty = books.get(b.getId()) + 1;
+            }
+
+            books.put(b.getId(), qty);
+
             session.setAttribute("books", books);
         }
         response.sendRedirect("BookList");

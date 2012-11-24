@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-         version="3.0">
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <servlet>
         <servlet-name>BookList</servlet-name>
+        <servlet-class>com.bookshop.controller.BookController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CartController</servlet-name>
+        <servlet-class>com.bookshop.controller.CartController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BookController</servlet-name>
         <servlet-class>com.bookshop.controller.BookController</servlet-class>
     </servlet>
     <servlet-mapping>
@@ -28,18 +32,26 @@
         <servlet-name>OrderController</servlet-name>
         <url-pattern>/OrderController</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CartController</servlet-name>
+        <url-pattern>/CartController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BookController</servlet-name>
+        <url-pattern>/BookController</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
     <filter>
         <filter-name>SessionFilter</filter-name>
-        <filter-class>com.bookshop.filters.SessionFilter</filter-class>
+        <filter-class>com.bookshop.filters.AuthenticationFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>SessionFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/OrderController</url-pattern>
     </filter-mapping>
     <welcome-file-list>
-        <welcome-file>BookList</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 </web-app>

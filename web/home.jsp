@@ -15,53 +15,63 @@
         </script>
     </head>
     <body>
-        <a href="cart.jsp">view cart</a>
-        <form action="BookList" method="post" >
-            <table width="100%" >
+        <div style="float: left;"><a href="CartController">view cart</a></div>
+        <div style="float: right;"><a href="LoginController">Log out</a></div>
+        <div style="clear: both">
+            <form action="BookList" method="post" >
+                <table width="100%" >
 
-                <c:forEach items="${requestScope.bookList}" var="book">
-                    <tr>
-                        <td align="center">
-                            <img src="img/${book.image}" href="no image"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center">
-                            <c:out value="${book.name}"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center">
-                            <c:out value="${book.ISBN}"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center">
-                            <c:out value="${book.title}"/>    
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center">
-                            <c:out value="${book.publisher}"/>    
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center">
-                            <c:out value="${book.price}"/>    
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center">
-                            <input type="submit" onclick="setValue('${book.id}');" value="Add To Cart" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                    </tr>   
-                </c:forEach>        
+                    <c:forEach items="${requestScope.bookList}" var="book">
+                        <tr>
+                            <td align="center">
+                                <img src="img/${book.image}" href="no image"/>                                                        
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <b>Name:</b> <c:out value="${book.name}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <b>ISBN:</b><c:out value="${book.ISBN}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <b>Title:</b> <c:out value="${book.title}"/>    
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <b>Publisher:</b> <c:out value="${book.publisher}"/>    
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <b>Price:</b> <c:out value="${book.price}"/>    
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <b>Authors:</b> <c:forEach items="${book.authors}" var="item">
+                                    <c:out value="${item.name}"/>,
+                                </c:forEach>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <input type="submit" onclick="setValue('${book.id}');" value="Add To Cart" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>   
+                    </c:forEach>        
 
-            </table>
-            <input type="hidden" id="hdnBookId" value="" name="hdnBookId"/>
-        </form>
+                </table>
+                <input type="hidden" id="hdnBookId" value="" name="hdnBookId"/>
+            </form>
+        </div>
     </body>
 </html>
