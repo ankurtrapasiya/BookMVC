@@ -15,6 +15,7 @@ import com.bookshop.model.Customer;
 import com.bookshop.model.Order;
 import com.bookshop.model.OrderDetail;
 import com.bookshop.model.OrderStatus;
+import com.bookshop.model.Payment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,9 @@ public class OrderController extends HttpServlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
+
+        RequestDispatcher rd = request.getRequestDispatcher("payment.jsp");
+        rd.forward(request, response);
     }
 
     /**
@@ -75,7 +79,7 @@ public class OrderController extends HttpServlet {
             od.setQuantity(val.getValue());
 
             amount += (Float.valueOf(b.getPrice()) * val.getValue());
-            
+
             list.add(od);
         }
 
@@ -83,7 +87,20 @@ public class OrderController extends HttpServlet {
 
         o.setOrderDetails(list);
 
+        String shippingAddress = request.getParameter("shippingAddress");
+
+        o.setShippingAddress(shippingAddress);
+
         boolean retval = o.addOrder(o);
+
+        String paymentType = request.getParameter("comboPayType");
+
+        Payment p = new Payment();
+
+        p.setOrder(o);
+        p.setPayment_type(Integer.parseInt(paymentType));
+
+        retval = p.doPayment();
 
         //  boolean retval = o.addOrder(books);
         if (retval) {

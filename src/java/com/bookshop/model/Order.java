@@ -19,6 +19,16 @@ public class Order {
                 + customer + ", orderDetails=" + orderDetails + "]";
     }
     private int order_id;
+    
+    private String shippingAddress;
+
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
 
     public int getOrder_id() {
         return order_id;
@@ -77,12 +87,13 @@ public class Order {
         boolean retval = false;
         DBConnection db = new DBConnection();
 
-        String query = "insert into `order`(order_date,amount,status,customer_id) values";
+        String query = "insert into `order`(order_date,amount,status,customer_id,shipping_address) values";
         query += "('" + this.order_date;
         query += "'," + this.amount;
         query += ",'" + this.status;
         query += "'," + this.customer.getCustomer_id();
-        query += ")";
+        query += "','" + this.getShippingAddress();
+        query += "')";
 
         System.out.println("query " + query);
         
@@ -99,6 +110,7 @@ public class Order {
 
             rs.next();
             order_id = rs.getInt("order_id");
+            this.setOrder_id(order_id);
             
             OrderDetail od;
 
