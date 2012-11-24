@@ -92,7 +92,7 @@ public class Order {
         query += "'," + this.amount;
         query += ",'" + this.status;
         query += "'," + this.customer.getCustomer_id();
-        query += "','" + this.getShippingAddress();
+        query += ",'" + this.getShippingAddress();
         query += "')";
 
         System.out.println("query " + query);

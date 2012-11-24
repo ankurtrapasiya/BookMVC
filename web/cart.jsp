@@ -67,7 +67,7 @@
                     </tr>
                 </c:forEach>
                     
-                <form action="OrderController" method="post">
+                <form action="OrderController" method="get">
                     <div style="float: right"><input type="submit" value="place order"/></div>
                 </form>
                     
